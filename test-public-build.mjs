@@ -20,3 +20,6 @@ assert.ok(!fs.existsSync(root+'/terrain.json'));assert.ok(!fs.existsSync(root+'/
 const manifest=JSON.parse(fs.readFileSync(root+'/data/manifest.json'));
 for(const item of Object.values(manifest.layers))assert.equal(fs.statSync(root+'/'+item.file).size,item.bytes);
 console.log('Static public build verified: project subpath assets, no local APIs, no terrain fallback, complete snapshot.');
+
+const publication=JSON.parse(fs.readFileSync(root+'/data/publication.json'));
+assert.equal(publication.publishedAt,process.env.ATLAS_PUBLISHED_AT?new Date(process.env.ATLAS_PUBLISHED_AT).toISOString():null);

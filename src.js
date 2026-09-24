@@ -1,3 +1,4 @@
+import {formatSnapshotDate,publicationLabel} from './snapshot-dates.js';
 import {assetUrl,readJson,lazySnapshotLoader} from './snapshot-loader.js';
 import {isBackgroundPlace,backgroundPlaceOpacity,backgroundPlaceColor} from './background-places.js';
 import {destinationSymbol,symbolVisible,destinationAnchor,themeAllowsSymbol,symbolInk} from './destination-symbols.js';
@@ -33,7 +34,7 @@ if(!__PUBLIC_VIEWER__&&new URLSearchParams(location.search).get('capture')==='1'
  document.documentElement.classList.add('broadcast-window');
  document.title='Tropicana Atlas - OBS';
 }
-if(__PUBLIC_VIEWER__){document.body.classList.add('public-view');$('footer span:last-child').textContent='Drag to explore · Scroll to zoom · City snapshot';$('#status').textContent='Loading map…';}
+if(__PUBLIC_VIEWER__){document.body.classList.add('public-view');if(matchMedia('(max-width:600px)').matches)document.body.classList.add('panel-closed');$('#map-help').textContent='Drag to explore · Scroll to zoom · City snapshot';$('#status').textContent='Loading map…';}
 const initialHash=new URLSearchParams(location.hash.slice(1));
 let backgroundPlaces=true;
 try{backgroundPlaces=localStorage.getItem('tropicana-background-places-v1')!=='0';}catch{}
@@ -187,7 +188,8 @@ function changed(){if(ready&&__PUBLIC_VIEWER__)loadOptionalLayers();countyContex
 function setFollowing(on){on=__PUBLIC_VIEWER__?false:on;following=on;if(on){overlay=true;cameraLayer.setVisible(true);$('#camera-overlay').setAttribute('aria-pressed','true');$('#camera-legend').hidden=false;}$('#follow').setAttribute('aria-pressed',String(on));$('#follow').textContent=on?'Following camera':'Follow camera';if(on&&lastCamera)applyCamera(lastCamera,0);saveHash();}
 map.on('pointerdrag',()=>{if(!inset)setFollowing(false);});
 map.getViewport().addEventListener('wheel',()=>{if(!inset)setFollowing(false);},{passive:true});
-function fit(){setFollowing(inset);if(all.length){const extent=createEmpty();for(const f of all)if(bucket.get(f)!=='contours'&&bucket.get(f)!=='trees')extend(extent,f.getGeometry().getExtent());view.fit(extent,{padding:inset?[25,25,25,25]:[45,50,45,document.body.classList.contains('panel-closed')?50:370],duration:350});}}
+function compactPublic(){return __PUBLIC_VIEWER__&&map.getSize()[0]<=600;}
+function fit(){if(compactPublic())document.body.classList.add('panel-closed');setFollowing(inset);if(all.length){const extent=createEmpty();for(const f of all)if(bucket.get(f)!=='contours'&&bucket.get(f)!=='trees')extend(extent,f.getGeometry().getExtent());view.fit(extent,{padding:inset?[25,25,25,25]:compactPublic()?[30,24,30,24]:[45,50,45,document.body.classList.contains('panel-closed')?50:370],duration:350});}}
 function saveHash(){if(!ready||inset)return;const c=toLonLat(view.getCenter());const h=new URLSearchParams({x:c[0].toFixed(6),y:c[1].toFixed(6),z:view.getZoom().toFixed(2),layers:[...visible].join(','),theme:currentTheme,preset:DEFAULTS_VERSION,camera:overlay?'1':'0',boundary:countyContext.boundary.getVisible()?'1':'0',background:backgroundPlaces?'1':'0'});history.replaceState(null,'','#'+h);}
 function restoreHash(){const h=new URLSearchParams(location.hash.slice(1));const x=Number(h.get('x')),y=Number(h.get('y')),z=Number(h.get('z'));if(h.has('x')&&h.has('y')&&h.has('z')&&[x,y,z].every(Number.isFinite)&&Math.abs(x)<180&&Math.abs(y)<85&&z>=1&&z<=22){view.setCenter(fromLonLat([x,y]));view.setZoom(z);return true;}return false;}
 let hashTimer;map.on('moveend',()=>{clearTimeout(hashTimer);hashTimer=setTimeout(saveHash,350);if(ready&&!inset){renderLayers();updateRouteLabels();if(__PUBLIC_VIEWER__)loadOptionalLayers();}});
@@ -211,7 +213,7 @@ $('#close-info').onclick=()=>{$('#info').hidden=true;selectionSource.clear();sel
 $('#search').addEventListener('input',()=>{
  const q=$('#search').value.trim().toLowerCase();$('#results').replaceChildren();if(q.length<2)return;
  const matches=[...named.entries()].filter(([name])=>name.toLowerCase().includes(q)).sort((a,b)=>{const rank=e=>Number(e[0].toLowerCase()===q)*100+Number(e[1].some(f=>f.get('place')))*20+Number(e[0].toLowerCase().startsWith(q))*10;return rank(b)-rank(a)||a[0].localeCompare(b[0]);}).slice(0,12);
- for(const [name,features]of matches){const b=document.createElement('button');b.textContent=name;b.onclick=()=>{setFollowing(false);const extent=createEmpty();for(const f of features){extend(extent,f.getGeometry().getExtent());visible.add(bucket.get(f));}renderLayers();changed();view.fit(extent,{padding:[60,390,60,370],maxZoom:17,duration:450});showInfo(features[0]);};$('#results').append(b);}
+ for(const [name,features]of matches){const b=document.createElement('button');b.textContent=name;b.onclick=()=>{if(compactPublic())document.body.classList.add('panel-closed');setFollowing(false);const extent=createEmpty();for(const f of features){extend(extent,f.getGeometry().getExtent());visible.add(bucket.get(f));}renderLayers();changed();view.fit(extent,{padding:compactPublic()?[30,24,Math.min(260,map.getSize()[1]*.45),24]:[60,390,60,370],maxZoom:17,duration:450});showInfo(features[0]);};$('#results').append(b);}
  if(!matches.length){const p=document.createElement('p');p.textContent='No matching exported name';$('#results').append(p);}
 });
 let lastCamera=null,lastArrival=0,lastAge=Infinity,displayCamera=null,animation=null,lastSample=null;
@@ -255,6 +257,8 @@ async function load(initial=false){
  let response,data;
  if(__PUBLIC_VIEWER__){
   snapshotManifest=await readJson(await fetch(assetUrl('data/manifest.json'),{cache:'no-cache'}));
+  const publication=await readJson(await fetch(assetUrl('data/publication.json'),{cache:'no-cache'}));
+  $('#publication-status').textContent=publicationLabel(publication.publishedAt);
   snapshotLayers=lazySnapshotLoader(snapshotManifest,async file=>readJson(await fetch(assetUrl(file))));
   data=await snapshotLayers.load('core');
  }else{response=await fetch('/data/map.geojson',{cache:'no-store'});if(!response.ok)throw new Error('The export is unavailable or still being written.');data=await response.json();}
@@ -270,7 +274,7 @@ async function load(initial=false){
  destinationSource.clear();destinationSource.addFeatures(all.filter(f=>destinationSymbol(bucket.get(f),f.getProperties())&&['Point','Polygon','MultiPolygon'].includes(f.getGeometry().getType())));
  source.clear();labels.clear();source.addFeatures(all.filter(f=>bucket.get(f)!=='places'));labels.addFeatures(all.filter(f=>f.get('name')&&!f.get('route')&&!f.get('osm_export_route')));
  if(initial&&!inset){const h=new URLSearchParams(location.hash.slice(1));if(!legacyCommunity&&h.has('layers')&&h.get('preset')===DEFAULTS_VERSION){visible.clear();for(const k of normalizeLayers(h.get('layers').split(','),!h.has('theme')))visible.add(k);}}
- renderLayers();$('#status').textContent=`Map exported ${__PUBLIC_VIEWER__?new Date(snapshotManifest.exportedAt).toLocaleString():response.headers.get('X-Export-Date')||''}`;$('#feature-total').textContent=(snapshotManifest?.features??all.length).toLocaleString()+' exported features';
+ renderLayers();$('#status').textContent=`Map exported ${__PUBLIC_VIEWER__?formatSnapshotDate(snapshotManifest.exportedAt):response.headers.get('X-Export-Date')||''}`;$('#feature-total').textContent=(snapshotManifest?.features??all.length).toLocaleString()+' exported features';
  if(initial){if(inset){fit();}else if(!restoreHash())fit();}ready=true;changed();
  if(lastCamera)applyCamera(lastCamera,0);
  }catch(e){$('#status').textContent=e.message;$('#camera-status').textContent='Map unavailable · reload export';console.error(e);}finally{$('#reload').disabled=false;}

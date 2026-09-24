@@ -1,3 +1,4 @@
+import {formatSnapshotDate,publicationLabel} from './snapshot-dates.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {gunzipSync} from 'node:zlib';
@@ -44,3 +45,7 @@ await retry.load('contours');assert.equal(retry.loaded.has('contours'),true);
 await assert.rejects(readJson(new Response('',{status:404})));
 assert.ok(manifest.layers.core.bytes<manifest.sourceBytes*.1);
 console.log('Public snapshot checks passed: lossless gzip, deferred groups, corrections, concurrent loads, retry and >90% initial map reduction.');
+
+assert.equal(publicationLabel(null),'Website not published · Local preview');
+assert.equal(formatSnapshotDate(null),'Date unavailable');
+assert.match(publicationLabel('2026-09-24T18:00:00Z'),/^Published /);

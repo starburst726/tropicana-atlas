@@ -52,3 +52,7 @@ The same source also builds the local viewer with `npm run build`. That build re
 ## Credits and licensing
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Fonts and dependency license notices ship with the public website. The custom viewer, fictional map and channel branding do not currently carry a separate redistribution license; public visibility is not a grant of rights to those assets.
+
+## Dates and publication status
+
+The footer distinguishes the map export time from website publication. Times display in the visitor's timezone, with a timezone label. Local previews say **Website not published · Local preview**; a build never invents a publication date. A future release build can set `ATLAS_PUBLISHED_AT` to the release's ISO timestamp with timezone. The generated `data/publication.json` belongs to that build, not the original export. Pages deployment is still disabled.
