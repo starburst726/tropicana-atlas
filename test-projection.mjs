@@ -14,9 +14,11 @@ p=projectCamera({...c,position:{x:-8000,y:1000,z:0},angle:{x:270,y:20}},flat);as
 assert.equal(surfaceHeight({...flat,waterDepths:[400,400,400,400]},0,0),400);
 const data=fixture(),rules=JSON.parse(fs.readFileSync(new URL('./public/road-overrides.json',import.meta.url)));
 let features=new GeoJSON().readFeatures(data),result=applyRoadOverrides(features,rules);assert.equal(result.applied.length,9);assert.equal(result.unmatched.length,0);assert.equal(result.ambiguous.length,0);
-assert.equal(features.filter(f=>f.get('map:road_class')==='residential').length,2);assert.equal(features.filter(f=>f.get('map:road_class')==='service').length,158);assert.equal(result.speedRuleApplied.length,158);
+assert.equal(features.filter(f=>f.get('map:road_class')==='residential').length,2);assert.equal(features.filter(f=>f.get('map:road_class')==='service').length,314);assert.equal(result.speedRuleApplied.length,314);
 assert.ok(features.filter(f=>f.get('map:road_class')).every(f=>f.get('highway')===f.get('map:original_highway')));
 const castlehill=features.filter(f=>f.get('name')==='Castlehill Lane');assert.equal(castlehill.length,3);assert.ok(castlehill.every(f=>f.get('map:road_class')==='service'));
 assert.ok(features.filter(f=>f.get('highway')==='pedestrian').every(f=>!f.get('map:road_class')));
 const one=features.find(f=>f.get('name')==='Primrose Street'&&f.get('map:road_class')==='residential');const duplicate=one.clone();result=applyRoadOverrides([one,duplicate],rules);assert.equal(result.applied.length,0);assert.ok(result.ambiguous.length>0);
 console.log('Projection: steep, shallow, off-map, horizon, water and bounded clipping passed. Nine unique road overrides applied; originals retained and ambiguous matches rejected.');
+
+const maple=features.find(f=>f.getId()==='way/162707');assert.equal(maple.get('map:road_class'),'service');assert.equal(maple.get('highway'),'secondary_link');

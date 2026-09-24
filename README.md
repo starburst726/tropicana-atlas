@@ -41,7 +41,7 @@ The snapshot is split into losslessly compressed core, tree and contour files wi
 
 No coordinates, exported tags or features are removed. Original road and area tags remain intact; reviewed display rules in `public/road-overrides.json` and `public/area-overrides.json` are applied in the viewer. Missing or ambiguous matches are reported. These rules do not reliably detect every unfamiliar Road Builder asset because asset identifiers are absent from the export.
 
-The viewer also applies an approved Tropicana display convention: link-classified road segments with exactly 30 km/h, one lane, and one-way status render as service roads. Pedestrian streets and other speeds or lane counts are excluded. This is a city-specific assumption, not asset identification; original tags remain intact. Specific reviewed segment rules take precedence, and Data details reports the two match counts separately (they can overlap). Future exports use the same rule automatically.
+The viewer also applies an approved Tropicana display convention: link-classified road segments with exactly 30 km/h, one or two lanes, and one-way status render as service roads. Pedestrian streets and other speeds or lane counts are excluded. This is a city-specific assumption, not asset identification; original tags remain intact. Specific reviewed segment rules take precedence, and Data details reports the two match counts separately (they can overlap). Future exports use the same rule automatically.
 
 ## Data limitations
 

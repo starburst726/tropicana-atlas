@@ -5,10 +5,10 @@ export function applyRoadOverrides(features,rules){
  const linkClasses=new Set(['motorway_link','trunk_link','primary_link','secondary_link','tertiary_link']);
  for(const f of features){
   const p=f.getProperties();
-  if(f.getGeometry().getType()!=='LineString'||!linkClasses.has(p.highway)||String(p.maxspeed)!=='30'||String(p.lanes)!=='1'||p.oneway!=='yes')continue;
+  if(f.getGeometry().getType()!=='LineString'||!linkClasses.has(p.highway)||String(p.maxspeed)!=='30'||!['1','2'].includes(String(p.lanes))||p.oneway!=='yes')continue;
   f.set('map:original_highway',p.highway);
   f.set('map:road_class','service');
-  f.set('map:correction','Tropicana display rule: 30 km/h, one lane, one-way link shown as a service road; road asset type is not exported.');
+  f.set('map:correction','Tropicana display rule: 30 km/h, one or two lanes, one-way link shown as a service road; road asset type is not exported.');
   speedRuleApplied.push(f.getId());
  }
  const distance=(a,b)=>Math.hypot((a[0]-b[0])*111000,(a[1]-b[1])*111000);

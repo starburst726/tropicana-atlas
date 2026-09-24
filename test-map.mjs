@@ -22,9 +22,11 @@ const make=(properties={},type='LineString')=>new GeoJSON().readFeature({type:'F
 for(const highway of ['motorway_link','trunk_link','primary_link','secondary_link','tertiary_link']){
  const f=make({highway});applyRoadOverrides([f],[]);assert.equal(f.get('map:road_class'),'service');assert.equal(f.get('highway'),highway);assert.equal(f.get('map:original_highway'),highway);
 }
-for(const props of [{maxspeed:'40'},{maxspeed:undefined},{maxspeed:'30 mph'},{lanes:'2'},{oneway:'no'},{oneway:undefined},{highway:'pedestrian'},{highway:'residential'},{highway:'service'},{highway:'motorway'}]){
+for(const props of [{maxspeed:'40'},{maxspeed:undefined},{maxspeed:'30 mph'},{lanes:'3'},{oneway:'no'},{oneway:undefined},{highway:'pedestrian'},{highway:'residential'},{highway:'service'},{highway:'motorway'}]){
  const f=make(props);applyRoadOverrides([f],[]);assert.equal(f.get('map:road_class'),undefined);
 }
 const point=make({},'Point');applyRoadOverrides([point],[]);assert.equal(point.get('map:road_class'),undefined);
 const specific=make({name:'Reviewed street'});applyRoadOverrides([specific],[{id:'review',name:'Reviewed street',original:'motorway_link',display:'residential',start:[0,0],end:[.001,0],toleranceMetres:1,reason:'Specific reviewed exception'}]);assert.equal(specific.get('map:road_class'),'residential');
 console.log('Tropicana speed rule preserves raw tags, excludes nonmatches, and respects reviewed exceptions.');
+
+const twoLane=make({lanes:'2'});applyRoadOverrides([twoLane],[]);assert.equal(twoLane.get('map:road_class'),'service');
