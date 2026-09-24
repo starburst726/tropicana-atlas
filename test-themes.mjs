@@ -52,3 +52,13 @@ assert.ok(normalizeLayers(['roads'],true).has('paths'));
 console.log('Road grouping, shared pedestrian streets, parking and paths zoom rules passed.');
 
 assert.ok(!normalizeLayers(['roads','highways']).has('localRoads'),'Current saved filters must not re-enable unchecked road groups');
+
+// Revealing a selected theme must scroll only its strip, never an ancestor.
+const {revealThemeOption}=await import('./theme-panel.js');
+const option={getBoundingClientRect:()=>({left:500,right:620}),scrollIntoView:()=>{throw new Error('Document scrolling is forbidden');}};
+const strip={scrollLeft:100,clientLeft:0,clientWidth:390,getBoundingClientRect:()=>({left:0}),querySelector:()=>({closest:()=>option})};
+revealThemeOption(strip);assert.equal(strip.scrollLeft,330);
+option.getBoundingClientRect=()=>({left:30,right:160});revealThemeOption(strip);assert.equal(strip.scrollLeft,330);
+option.getBoundingClientRect=()=>({left:-90,right:40});revealThemeOption(strip);assert.equal(strip.scrollLeft,240);
+strip.querySelector=()=>null;revealThemeOption(strip);assert.equal(strip.scrollLeft,240);
+console.log('Theme reveal stays within the tab strip without document scrolling.');

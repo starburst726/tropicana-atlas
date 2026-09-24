@@ -2,9 +2,18 @@ import {categorySymbols,symbolInk} from './destination-symbols.js';
 import {contextColor} from './map-presentation.js';
 import {themes,categories,layerAtScale,zoomHint,routes,gettingAroundThemes,contextTransitDefaults} from './themes.js';
 const el=(tag,text,cls)=>{const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;};
+// Reveal only within the horizontal theme strip; never scroll the document.
+export function revealThemeOption(bar){
+ const option=bar.querySelector('input:checked')?.closest('label');
+ if(!option)return;
+ const bounds=bar.getBoundingClientRect(),item=option.getBoundingClientRect();
+ const left=bounds.left+bar.clientLeft,right=left+bar.clientWidth;
+ if(item.left<left)bar.scrollLeft+=item.left-left;
+ else if(item.right>right)bar.scrollLeft+=item.right-right;
+}
 export function renderThemeBar(current,onSelect){
  const bar=document.querySelector('#theme-bar');
- const reveal=()=>bar.querySelector('input:checked')?.closest('label').scrollIntoView({block:'nearest',inline:'nearest'});
+ const reveal=()=>revealThemeOption(bar);
  if(!bar.dataset.resizeReady){new ResizeObserver(reveal).observe(bar);bar.dataset.resizeReady='1';}
  if(bar.children.length){const changed=bar.querySelector('input:checked')?.value!==current;for(const input of bar.querySelectorAll('input'))input.checked=input.value===current;if(changed)reveal();return;}bar.replaceChildren();
  for(const [id,theme] of Object.entries(themes)){
