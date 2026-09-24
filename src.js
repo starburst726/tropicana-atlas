@@ -204,7 +204,7 @@ function showInfo(f){
  $('#info-note').textContent=cat==='air'?'Exporter labels this as subway; classified as air from its name. Geometry may be missing.':f.getGeometry().getType().includes('Polygon')&&p.natural!=='water'?'Exported lot or area; not a surveyed building footprint.':cat==='places'?'District label position; district boundaries were not exported.':p.route?'Exported route geometry; service frequency and live vehicles are not included.':'';
  if(cat==='stops'&&symbol==='metro')$('#info-note').textContent='Transit station or stop; mode unspecified in the export. M is the atlas marker, not a verified metro classification.';
  if(p['map:area_class']==='fishing')$('#info-note').textContent='Reviewed fishing area. Original export labels this as farmland; the water underneath is preserved.';
- if(p['map:road_class'])$('#info-note').textContent='Reviewed map display: '+(p['map:road_class']==='service'?'access / alley':'local street')+'. Original export: '+p.highway+'.';
+ if(p['map:road_class'])$('#info-note').textContent='Map display: '+(p['map:road_class']==='service'?'access / alley':'local street')+'. Original export: '+p.highway+'.';
  $('#info-tags').replaceChildren();for(const [k,v]of Object.entries(p)){if(['geometry','timestamp','version','id'].includes(k))continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=k;dd.textContent=String(v);$('#info-tags').append(dt,dd);}
  destinationLayer.changed();labelLayer.changed();updateRouteLabels();
 }
