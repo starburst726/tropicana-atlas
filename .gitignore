@@ -47,3 +47,9 @@
 /snapshot/data/*
 !/snapshot/data/manifest.json
 !/snapshot/data/*.geojson.gz
+
+!/.github/
+/.github/*
+!/.github/workflows/
+/.github/workflows/*
+!/.github/workflows/pages.yml

@@ -2,7 +2,7 @@
 
 An interactive browser atlas of a fictional Cities: Skylines II county, based on an exported map snapshot. Built with OpenLayers, Vite, Public Sans and Google Material Symbols.
 
-**Website publishing is not enabled yet.** This repository is prepared for GitHub Pages; it does not deploy itself.
+**[Open the public atlas](https://starburst726.github.io/tropicana-atlas/).** GitHub Pages serves the static map, including when the game and local computer are off.
 
 ## Explore the map
 
@@ -21,7 +21,7 @@ npm run build:public
 npm run preview:public
 ```
 
-Open `http://127.0.0.1:8878/tropicana-atlas/`. The built website is in `dist-public/`. Its base path is `/tropicana-atlas/`; adjust `vite.config.js` if the repository name changes. No deployment workflow is included.
+Open `http://127.0.0.1:8878/tropicana-atlas/`. The built website is in `dist-public/`. Its base path is `/tropicana-atlas/`; adjust `vite.config.js` if the repository name changes. The Pages workflow tests, builds and publishes changes pushed to `main`; it can also be run manually from the Actions tab.
 
 ## Snapshot updates
 
@@ -35,7 +35,7 @@ npm run build:public
 npm run preview:public
 ```
 
-Use the export's actual timestamp with its timezone, not the example date. Review the preview and corrections before committing `snapshot/data/`. Preparation never writes to the input file. It records a source hash and writes the completed manifest last. Upload/publish controls and the proposed publisher GUI are future work.
+Use the export's actual timestamp with its timezone, not the example date. Review the preview and corrections before committing `snapshot/data/`. Preparation never writes to the input file. It records a source hash and writes the completed manifest last. Pushing reviewed changes to `main` triggers publication. A failed build leaves the previous website in place. The proposed publisher GUI is future work.
 
 The snapshot is split into losslessly compressed core, tree and contour files with content-hashed filenames. The core loads first. Contours load when enabled; individual trees load only when enabled and zoomed to their visible scale. Layers are fetched once per page session and can be retried after a network failure. Modern browsers with the Decompression Streams API are required.
 
@@ -55,4 +55,4 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Fonts and dependency licen
 
 ## Dates and publication status
 
-The footer distinguishes the map export time from website publication. Times display in the visitor's timezone, with a timezone label. Local previews say **Website not published · Local preview**; a build never invents a publication date. A future release build can set `ATLAS_PUBLISHED_AT` to the release's ISO timestamp with timezone. The generated `data/publication.json` belongs to that build, not the original export. Pages deployment is still disabled.
+The footer distinguishes the map export time from website publication. Times display in the visitor's timezone, with a timezone label. Local previews say **Website not published · Local preview**; a build never invents a publication date. The Pages workflow sets `ATLAS_PUBLISHED_AT` to the release build's UTC time, shown on the site once deployment succeeds. The generated `data/publication.json` belongs to that build, not the original export. Local builds leave the publication timestamp empty. A public site update normally follows a push within a few minutes; the Actions run records success or failure.
