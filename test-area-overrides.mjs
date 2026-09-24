@@ -15,7 +15,8 @@ const fishing=features.filter(f=>classifyThemed(f.getProperties())==='fishing');
 assert.equal(fishing.length,3);assert.equal(features.filter(f=>classifyThemed(f.getProperties())==='agriculture').length,82);
 for(const f of fishing){assert.equal(f.get('landuse'),'farmland');assert.equal(f.get('map:original_landuse'),'farmland');}
 const renumbered=fresh();renumbered.forEach((f,i)=>f.setId('new/'+i));assert.equal(applyAreaOverrides(renumbered,rules).applied.length,3);
-const missing=fresh().filter(f=>f.getId()!==rules[0].referenceId);assert.ok(applyAreaOverrides(missing,rules).unmatched.includes(rules[0].id));
-const dup=fresh(),target=dup.find(f=>f.getId()===rules[0].referenceId);dup.push(target.clone());assert.ok(applyAreaOverrides(dup,rules).ambiguous.includes(rules[0].id));
-const changed=fresh();changed.find(f=>f.getId()===rules[0].referenceId).getGeometry().translate(.01,0);assert.ok(applyAreaOverrides(changed,rules).unmatched.includes(rules[0].id));
+const reviewed=fresh();applyAreaOverrides(reviewed,[rules[0]]);const reviewedId=reviewed.find(f=>f.get('map:area_class')==='fishing').getId();
+const missing=fresh().filter(f=>f.getId()!==reviewedId);assert.ok(applyAreaOverrides(missing,rules).unmatched.includes(rules[0].id));
+const dup=fresh(),target=dup.find(f=>f.getId()===reviewedId);dup.push(target.clone());assert.ok(applyAreaOverrides(dup,rules).ambiguous.includes(rules[0].id));
+const changed=fresh();changed.find(f=>f.getId()===reviewedId).getGeometry().translate(.01,0);assert.ok(applyAreaOverrides(changed,rules).unmatched.includes(rules[0].id));
 console.log('Three fishing corrections verified; original tags retained; renumbering, missing, duplicate and changed geometry handled.');
