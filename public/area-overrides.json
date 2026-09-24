@@ -1,0 +1,41 @@
+[
+  {
+    "id": "reviewed-fishing-1",
+    "referenceId": "way/172554",
+    "bounds": [
+      -0.0132145743155265,
+      -0.0284384479694538,
+      -0.00370993069485501,
+      -0.0198047864759291
+    ],
+    "area": 5.284710953765834e-05,
+    "toleranceMetres": 5,
+    "reason": "Reviewed fishing area exported as farmland; display as a water activity overlay."
+  },
+  {
+    "id": "reviewed-fishing-2",
+    "referenceId": "way/172565",
+    "bounds": [
+      -0.0129979720931869,
+      -0.037311888548705,
+      -0.00673827575133727,
+      -0.0269384017806869
+    ],
+    "area": 4.1036785057080966e-05,
+    "toleranceMetres": 5,
+    "reason": "Reviewed fishing area exported as farmland; display as a water activity overlay."
+  },
+  {
+    "id": "reviewed-fishing-3",
+    "referenceId": "way/172583",
+    "bounds": [
+      -0.0104193841057855,
+      -0.0199718336500563,
+      -0.00265779347462697,
+      -0.00133062455460832
+    ],
+    "area": 5.828149721213181e-05,
+    "toleranceMetres": 5,
+    "reason": "Reviewed fishing area exported as farmland; display as a water activity overlay."
+  }
+]

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "exportedAt": "2026-09-24T15:03:46.242Z",
+  "features": 286289,
+  "sourceSha256": "a022c89f96df156fc92fb6f805d89aeaeb9c117d443605314c6eb572bb87851d",
+  "sourceBytes": 76789951,
+  "counts": {
+    "bus": 436,
+    "subway": 127,
+    "train": 19,
+    "ferry": 7,
+    "water": 1,
+    "agriculture": 85,
+    "extraction": 6,
+    "forest": 4,
+    "parks": 824,
+    "residential": 29609,
+    "fire": 59,
+    "manufacturing": 713,
+    "retail": 868,
+    "pharmacies": 62,
+    "entertainment": 170,
+    "food": 92,
+    "logistics": 71,
+    "stops": 677,
+    "healthcare": 23,
+    "schools": 125,
+    "parking": 252,
+    "police": 36,
+    "offices": 343,
+    "postal": 31,
+    "airports": 2,
+    "substations": 6,
+    "industrial": 29,
+    "powerPlants": 22,
+    "rail": 859,
+    "localRoads": 5739,
+    "majorRoads": 2619,
+    "highways": 2368,
+    "other": 920,
+    "powerLines": 340,
+    "paths": 3132,
+    "pedestrianStreets": 13,
+    "contours": 50002,
+    "places": 25,
+    "trees": 185573
+  },
+  "layers": {
+    "core": {
+      "file": "data/core-7bb7419c50299d51.geojson.gz",
+      "features": 50714,
+      "bytes": 4144940,
+      "decodedBytes": 21511010,
+      "sha256": "7bb7419c50299d51247f4c1e0beb8b62532625a237bc16ba08ce1481d3a5aed2"
+    },
+    "trees": {
+      "file": "data/trees-f4abda36ff7329f5.geojson.gz",
+      "features": 185573,
+      "bytes": 4592158,
+      "decodedBytes": 41084892,
+      "sha256": "f4abda36ff7329f50206d3adbd1f96ba9b80f58e0ac6e16cae36df0427d9f2a6"
+    },
+    "contours": {
+      "file": "data/contours-4494e88825eb482b.geojson.gz",
+      "features": 50002,
+      "bytes": 810614,
+      "decodedBytes": 14194131,
+      "sha256": "4494e88825eb482be119f2a2a67430320da16c6bfb97e89dd5ed5531a0585313"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+import {fixture} from './test-fixture.mjs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import GeoJSON from 'ol/format/GeoJSON.js';
+import {applyAreaOverrides} from './area-overrides.js';
+import {classifyThemed} from './themes.js';
+const rules=JSON.parse(fs.readFileSync('public/area-overrides.json','utf8'));
+const json=fixture();
+assert.equal(json.features.filter(f=>classifyThemed(f.properties)==='pharmacies').length,62);
+json.features=json.features.filter(f=>f.properties.landuse==='farmland'||f.properties.natural==='water');
+const fresh=()=>new GeoJSON().readFeatures(json);
+const features=fresh(),report=applyAreaOverrides(features,rules);
+assert.equal(report.applied.length,3);assert.deepEqual(report.unmatched,[]);assert.deepEqual(report.ambiguous,[]);
+const fishing=features.filter(f=>classifyThemed(f.getProperties())==='fishing');
+assert.equal(fishing.length,3);assert.equal(features.filter(f=>classifyThemed(f.getProperties())==='agriculture').length,82);
+for(const f of fishing){assert.equal(f.get('landuse'),'farmland');assert.equal(f.get('map:original_landuse'),'farmland');}
+const renumbered=fresh();renumbered.forEach((f,i)=>f.setId('new/'+i));assert.equal(applyAreaOverrides(renumbered,rules).applied.length,3);
+const missing=fresh().filter(f=>f.getId()!==rules[0].referenceId);assert.ok(applyAreaOverrides(missing,rules).unmatched.includes(rules[0].id));
+const dup=fresh(),target=dup.find(f=>f.getId()===rules[0].referenceId);dup.push(target.clone());assert.ok(applyAreaOverrides(dup,rules).ambiguous.includes(rules[0].id));
+const changed=fresh();changed.find(f=>f.getId()===rules[0].referenceId).getGeometry().translate(.01,0);assert.ok(applyAreaOverrides(changed,rules).unmatched.includes(rules[0].id));
+console.log('Three fishing corrections verified; original tags retained; renumbering, missing, duplicate and changed geometry handled.');

@@ -1,0 +1,24 @@
+{
+  "name": "tropicana-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build:public": "vite build --mode public",
+    "prepare:snapshot": "node prepare-snapshot.mjs",
+    "preview:public": "vite preview --mode public --host 127.0.0.1 --port 8878",
+    "test": "node test-map.mjs && node test-projection.mjs && node test-themes.mjs && node test-transit-labels.mjs && node test-presentation.mjs && node test-symbols.mjs && node test-background-places.mjs && node test-area-overrides.mjs && node test-public.mjs"
+  },
+  "dependencies": {
+    "ol": "10.10.0",
+    "osmtogeojson": "3.0.0-beta.5",
+    "@xmldom/xmldom": "^0.8.11"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "$@xmldom/xmldom"
+  }
+}

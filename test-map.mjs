@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {classify,gameToLonLat,cameraHeading,ageState} from './classify.js';
+assert.equal(classify({route:'subway',name:'Air line 1'}),'air');
+assert.equal(classify({route:'subway',name:'Island metro'}),'subway');
+assert.equal(classify({landuse:'industrial',industrial:'warehouse'}),'logistics');
+assert.equal(classify({landuse:'industrial',industrial:'factory'}),'manufacturing');
+assert.equal(classify({office:'it'}),'offices');
+assert.equal(classify({amenity:'arts_centre'}),'entertainment');
+assert.equal(classify({landuse:'residential'}),'residential');
+assert.deepEqual(gameToLonLat(1110,2220),[.01,.02]);
+assert.deepEqual(gameToLonLat(1110,2220,'East'),[-.02,.01]);
+assert.equal(cameraHeading({position:{x:0,z:0},pivot:{x:0,z:1}}),0);
+assert.equal(cameraHeading({position:{x:0,z:0},pivot:{x:1,z:0}}),Math.PI/2);
+assert.equal(ageState(2999),'live'); assert.equal(ageState(3001),'stale'); assert.equal(ageState(10001),'hidden');
+console.log('Classification, coordinate orientation, heading and stale thresholds passed.');
